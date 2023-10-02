@@ -9,6 +9,7 @@ uvicorn = "*"
 sqlalchemy = "*"
 python-dotenv = "*"
 validators = "*"
+pydantic-settings = "*"
 
 [dev-packages]
 
