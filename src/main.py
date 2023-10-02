@@ -5,7 +5,8 @@ import validators
 import secrets
 
 # import external libraries
-from fastapi import FastAPI, Depends, HTTPException
+from fastapi import FastAPI, Depends, HTTPException, Request
+from fastapi.responses import RedirectResponse
 from sqlalchemy.orm import Session
 
 # import local libraries
@@ -30,6 +31,18 @@ def read_root():
 
 def raise_bad_request(message):
     raise HTTPException(status_code=400, detail=message)
+
+@app.get("/{url_key}")
+def forward_request(url_key: str, request: Request, db: Session = Depends(get_db)):
+    db_url = (
+        db.query(models.URL)
+        .filter(models.URL.key == url_key, models.URL.is_active)
+        .first()
+    )
+    if db_url:
+        return RedirectResponse(db_url.target_url)
+    else:
+        raise_not_found(request)
 
 @app.post("/url", response_model=schema.URLInfo)
 def create_url(url: schema.URLBase, db: Session = Depends(get_db)):
