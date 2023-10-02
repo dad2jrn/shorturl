@@ -8,6 +8,9 @@ class Settings(BaseSettings):
     base_url: str = "http://localhost:8000"
     db_url: str = "sqlite:///./shortner.db"
 
+    class Config:
+        env_file = ".env"
+
 @lru_cache #cache the data to memory
 def get_settings() -> Settings:
     settings = Settings()
